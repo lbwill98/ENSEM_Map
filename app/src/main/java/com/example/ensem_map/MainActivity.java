@@ -9,6 +9,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -60,12 +61,19 @@ public class MainActivity extends AppCompatActivity {
 
         //On affiche les numéros des étages avec le tabLayout
         new TabLayoutMediator(tableLayout, vpPlan,  (tab, position) -> tab.setText("  "+(position - 1)+"  ")).attach();
+
+        btnRecherche.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showQRCode();
+            }
+        });
     }
 
     /**
      * Vérification des permissions, l'application ferme si les permissions sont refusées
      */
-    protected void checkPermissions(){
+    private void checkPermissions(){
         boolean permissionAcceptee = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED;
 
         if(!permissionAcceptee) {
@@ -79,5 +87,13 @@ public class MainActivity extends AppCompatActivity {
         if(demandeRefusee){
             System.exit(0);
         }
+    }
+
+    /**
+     * génération du QRcode et affichage sur ivQRcode
+     */
+    private void showQRCode(){
+        QRcode qRcode = new QRcode(etRecherche.getText().toString(),ivQRCode.getWidth(),ivQRCode.getHeight());
+        ivQRCode.setImageBitmap(qRcode.getBitmap());
     }
 }
