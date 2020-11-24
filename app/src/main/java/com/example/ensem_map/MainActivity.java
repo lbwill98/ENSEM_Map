@@ -1,6 +1,7 @@
 package com.example.ensem_map;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -8,6 +9,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.pdf.PdfDocument;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -22,16 +25,18 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
 
     //Déclaration des attriuts graphiques
-    EditText etRecherche;
-    Switch swtcMobiliteReduite;
-    Button btnRecherche;
-    ImageView ivQRCode;
-    com.google.android.material.tabs.TabLayout tableLayout;
-    ViewPager2 vpPlan;
+    static EditText etRecherche;
+    static Switch swtcMobiliteReduite;
+    static Button btnRecherche;
+    static ImageView ivQRCode;
+    static com.google.android.material.tabs.TabLayout tableLayout;
+    static ViewPager2 vpPlan;
 
-    int[] imagesPlan = {R.drawable.rdj,R.drawable.rdc,R.drawable.premier, R.drawable.deuxieme,R.drawable.troisieme};
+    static int[] imagesPlan = {R.drawable.rdj,R.drawable.rdc,R.drawable.premier, R.drawable.deuxieme,R.drawable.troisieme};
 
     MyAdapter myAdapter;
+    BitmapHelper bitmapHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +67,18 @@ public class MainActivity extends AppCompatActivity {
         //On affiche les numéros des étages avec le tabLayout
         new TabLayoutMediator(tableLayout, vpPlan,  (tab, position) -> tab.setText("  "+(position - 1)+"  ")).attach();
 
+        //initialisation de l'instance de la classe BitmapHelper
+        bitmapHelper = new BitmapHelper(getResources());
+
         btnRecherche.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
-                showQRCode();
+                File.createFolder();
+                // String uri = File.saveBitmapToPNGFile("rdc.png", bitmapHelper.loadBitmapFromDrawable(R.drawable.rdc));
+                String uri = File.savePdfDocument("rdc.pdf",File.addPageWithBitmapToPdf(
+                        bitmapHelper.loadBitmapFromDrawable(R.drawable.premier),File.addPageWithBitmapToPdf(bitmapHelper.loadBitmapFromDrawable(R.drawable.rdc), new PdfDocument())));
+                showQRCode(uri);
             }
         });
     }
@@ -92,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
     /**
      * génération du QRcode et affichage sur ivQRcode
      */
-    private void showQRCode(){
-        QRcode qRcode = new QRcode(etRecherche.getText().toString(),ivQRCode.getWidth(),ivQRCode.getHeight());
+    private void showQRCode(String string){
+        QRcode qRcode = new QRcode(string,ivQRCode.getWidth(),ivQRCode.getHeight());
         ivQRCode.setImageBitmap(qRcode.getBitmap());
     }
 }

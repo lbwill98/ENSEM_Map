@@ -9,6 +9,11 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+/**
+ * class pour gerer les QRcode
+ * le but est de fournir une bitmap : de la bonne taille (celle de l'imageView, ivQRcode)
+ *                                    correspondant au QRcode de l'attribut string (le lien de telechargement du pdf via firebase)
+ */
 public class QRcode {
 
     private String string;
@@ -33,6 +38,7 @@ public class QRcode {
 
     /**
      * Methode retournant la bitmap de dimension width et heigth repressantant le code QR de l'attribut string
+     * si le string est null, retourne la bitmap erreur
      */
     private Bitmap createBitmap(){
         Bitmap btm = erreurBitmap();

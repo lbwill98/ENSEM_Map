@@ -12,6 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
+/**
+ * class pour l'affichage des images des plans dans le viewPager
+ * A FAIRE : commenter les fonctions
+ *           charger les cartes avec le chemin tracés depuis le stockage externe après une recherche
+ */
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     int[] images;
