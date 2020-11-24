@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "39200650224",
+    "firebase_url": "https://ensem-map.firebaseio.com",
+    "project_id": "ensem-map",
+    "storage_bucket": "ensem-map.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:39200650224:android:907fdc3feaa9ab149f2335",
+        "android_client_info": {
+          "package_name": "com.example.ensem_map"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "39200650224-3832ovv83bmamrepvojqpr0mv5q3gt05.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ensem_map",
+            "certificate_hash": "206c5767ffe75d21e4d7be56edefc3fc5914b8f1"
+          }
+        },
+        {
+          "client_id": "39200650224-a30hr0e5q7b3dpg299l0ie2ul132l1i2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKcPetryE18U-kJlwSyGlp_2dYGXyyfpo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "39200650224-a30hr0e5q7b3dpg299l0ie2ul132l1i2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

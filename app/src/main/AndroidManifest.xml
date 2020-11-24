@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ensem_map">
 
-    <!--Permissions pour le stockage interne et internet-->
+    <!--Permissions pour le stockage externe et internet-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -15,9 +15,9 @@
         android:theme="@style/Theme.ENSEM_Map">
         <activity android:name=".MainActivity"
 
-            android:windowSoftInputMode="stateHidden"
-            android:screenOrientation="landscape">
-            <!--On cache le clavier au debut et on met l'application en mode paysage-->
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden">
+            <!--On bloque l'application en mode paysage et on cache le clavier au debut de l'activité-->
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

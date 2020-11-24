@@ -41,7 +41,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="9"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+
+                    android:descendantFocusability="beforeDescendants"
+                    android:focusableInTouchMode="true">
+                    <!--on met le focus au debut sur ce layout, cela évide le focus sur l'edittext et donc l'ouverture du clavier-->
 
                     <EditText
                         android:id="@+id/etRecherche"

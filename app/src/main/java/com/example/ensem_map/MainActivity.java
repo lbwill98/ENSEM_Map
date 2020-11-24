@@ -8,11 +8,15 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
 import android.graphics.pdf.PdfDocument;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,17 +24,15 @@ import android.widget.Switch;
 
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import java.util.Objects;
-
 public class MainActivity extends AppCompatActivity {
 
     //Déclaration des attriuts graphiques
-    static EditText etRecherche;
-    static Switch swtcMobiliteReduite;
-    static Button btnRecherche;
+    EditText etRecherche;
+    Switch swtcMobiliteReduite;
+    Button btnRecherche;
     static ImageView ivQRCode;
-    static com.google.android.material.tabs.TabLayout tableLayout;
-    static ViewPager2 vpPlan;
+    com.google.android.material.tabs.TabLayout tableLayout;
+    ViewPager2 vpPlan;
 
     static int[] imagesPlan = {R.drawable.rdj,R.drawable.rdc,R.drawable.premier, R.drawable.deuxieme,R.drawable.troisieme};
 
@@ -43,19 +45,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //on enlève la barre de l'application
-        Objects.requireNonNull(getSupportActionBar()).hide();
-
         //on vérifie les permissions
         checkPermissions();
 
         //Assiciations des attributs avec éléments graphques xml
-        etRecherche = (EditText)findViewById(R.id.etRecherche);
-        swtcMobiliteReduite = (Switch) findViewById(R.id.swtcMobiliteReduite);
-        btnRecherche = (Button) findViewById(R.id.btnRecherche);
-        ivQRCode =(ImageView) findViewById(R.id.ivQRCode);
-        tableLayout = (com.google.android.material.tabs.TabLayout)findViewById(R.id.tableLayout);
-        vpPlan = (ViewPager2)findViewById(R.id.vpPlan);
+        etRecherche = findViewById(R.id.etRecherche);
+        swtcMobiliteReduite = findViewById(R.id.swtcMobiliteReduite);
+        btnRecherche = findViewById(R.id.btnRecherche);
+        ivQRCode = findViewById(R.id.ivQRCode);
+        tableLayout = findViewById(R.id.tableLayout);
+        vpPlan = findViewById(R.id.vpPlan);
 
         //On met les images des plans des étages sur le viewPager avec la class myAdapter
         myAdapter = new MyAdapter(imagesPlan);
@@ -74,14 +73,38 @@ public class MainActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
+                //A FAIRE : gerer le nom des fichiers (itinéraire rechercher et date+heure de recherche)
+                String fileName = "plan";
                 File.createFolder();
-                // String uri = File.saveBitmapToPNGFile("rdc.png", bitmapHelper.loadBitmapFromDrawable(R.drawable.rdc));
-                String uri = File.savePdfDocument("rdc.pdf",File.addPageWithBitmapToPdf(
+                String uriString = File.savePdfDocument(fileName,File.addPageWithBitmapToPdf(
                         bitmapHelper.loadBitmapFromDrawable(R.drawable.premier),File.addPageWithBitmapToPdf(bitmapHelper.loadBitmapFromDrawable(R.drawable.rdc), new PdfDocument())));
-                showQRCode(uri);
+                FirebaseHelper.uploadFile(uriString,fileName);
             }
         });
     }
+
+    /**
+     * enlève le focus sur etRecherche lorsque l'on touche ailleurs
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if ( v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent( event );
+    }
+
 
     /**
      * Vérification des permissions, l'application ferme si les permissions sont refusées
@@ -105,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * génération du QRcode et affichage sur ivQRcode
      */
-    private void showQRCode(String string){
+    public static void showQRCode(String string){
         QRcode qRcode = new QRcode(string,ivQRCode.getWidth(),ivQRCode.getHeight());
         ivQRCode.setImageBitmap(qRcode.getBitmap());
     }

@@ -13,7 +13,7 @@ import java.io.IOException;
 
 /**
  * class permettant de gerer les fichiers utils pour l'application
- * ils sont stockers dans un dossier ENSEM_Map, présent dan le stockage interne de la tablette
+ * ils sont stockers dans un dossier ENSEM_Map, présent dans le stockage interne de la tablette
  * les fichiers sont : les pdf des itinéraires, à uploader sur firebase
  *                     les images PNG des itinéraires, à afficher dans l'application
  */
@@ -46,7 +46,7 @@ public class File {
      */
     public static String saveBitmapToPNGFile(String fileName, Bitmap btmPlanEtage){
         java.io.File myDir = new java.io.File(DirectoryPath);
-        java.io.File file = new java.io.File(myDir, fileName);
+        java.io.File file = new java.io.File(myDir, fileName+".png");
         if (file.exists()) file.delete ();
         try {
             FileOutputStream out = new FileOutputStream(file);
@@ -94,7 +94,7 @@ public class File {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static String savePdfDocument(String fileName, PdfDocument pdfDocument){
         java.io.File myDir = new java.io.File(DirectoryPath);
-        java.io.File file = new java.io.File(myDir, fileName);
+        java.io.File file = new java.io.File(myDir, fileName+".pdf");
         if (file.exists()) file.delete ();
         try {
             pdfDocument.writeTo(new FileOutputStream(file));
