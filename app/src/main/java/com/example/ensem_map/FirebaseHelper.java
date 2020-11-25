@@ -11,6 +11,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.Objects;
+
 /**
  * class permettant de gerer la communication avec firebase
  * utile pour l'envoie du pdf et la recupération du lien de telechargement
@@ -21,8 +23,6 @@ public class FirebaseHelper {
      * fonction qui envoie le pdf sur firestor (uriString = uri du fichier pdf)
      * elle recupère l'url de telechargement une fois le fichier uploader
      * puis elle fait appel à showQRCode pour afficher le qrCode dans limageView ivQRcode
-     * @param uriString
-     * @param fileName
      */
     public static void uploadFile(String uriString , String fileName) {
         Uri uri = Uri.parse(uriString);
@@ -40,7 +40,7 @@ public class FirebaseHelper {
                 uriTask.addOnCompleteListener(new OnCompleteListener<Uri>() {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
-                        MainActivity.showQRCode(uriTask.getResult().toString());
+                        MainActivity.showQRCode(Objects.requireNonNull(uriTask.getResult()).toString());
                     }
                 });
             }

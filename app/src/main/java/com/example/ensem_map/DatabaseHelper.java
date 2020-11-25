@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.Nullable;
 
@@ -24,16 +24,12 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private final Context context;
-    private final String dbName;
-    private final String dbPath;
+    private final String dbName,dbPath;
 
     private SQLiteDatabase db;
 
     /**
      * constructeur, contexte MainActivity.this, nom et version de la database sont rentrés dans le onCreate() de MainActivity
-     * @param context
-     * @param name
-     * @param version
      */
     public DatabaseHelper(@Nullable Context context, @Nullable String name, int version) {
         super(context, name, null, version);
@@ -56,8 +52,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * fonction pour initialiser la base de données
      */
     public void initDatabase(){
-        copyDatabase();
-        openDataBase();
+        try {
+            copyDatabase();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        try {
+            openDataBase();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -99,11 +103,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * fonction pour faire des requettes,
      * par exemple : makeQuery("select * from pointtable")
      *     a pour resultat : [0 2000 5700 0 1,2,4,7,8 ENSEMMap null null, 1 1900 5570 0 0 Accueil null null, ...]
-     * @param SQLReq
-     * @return
      */
     public ArrayList<String> makeQuery(String SQLReq){
-        ArrayList<String> array_list = new ArrayList<String>();
+        ArrayList<String> array_list = new ArrayList<>();
         try {
             @SuppressLint("Recycle") Cursor c = db.rawQuery(SQLReq, new String[]{});
             int n = c.getColumnCount();
@@ -118,6 +120,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             array_list.add("req invalide");
         }
         return array_list;
+    }
+
+    /**
+     * fonction qui recupère les les nom prenom personnel et nom salle depuis la db
+     * puis elle les mets dans un ArrayAdapteur qu'elle retourne
+     * utile pour l'adapteur de l'autoCompletTextView dans MainActivity
+     */
+    public ArrayAdapter<String> createAdapter(Context context){
+        ArrayList<String> arrayList;
+        arrayList = makeQuery("Select PrenomPersonnel, NomPersonnel from PointTable WHERE PrenomPersonnel not null");
+        arrayList.addAll(makeQuery("Select NomSalle from PointTable WHERE NomSalle not NULL"));
+        return new ArrayAdapter<>(context, android.R.layout.simple_list_item_1,arrayList.toArray(new String[0]));
     }
 
     //cree un vector contenant les Points dans l'ordre d'apparition dans le fichier sations
@@ -136,5 +150,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return(lecturePoint);
     }*/
-
 }

@@ -17,7 +17,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 public class QRcode {
 
     private String string;
-    private int width,height;
+    private final int width,height;
     private Bitmap bitmap;
 
     public QRcode(String string, int width, int height) {

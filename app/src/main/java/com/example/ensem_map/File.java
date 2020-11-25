@@ -40,9 +40,6 @@ public class File {
      * elle prend en entrée le nom du fichier et la bitmap
      * elle retourne une string correspondant à l'uri du fichier
      * utile pour sauvegarder les plans avec le chemin tracer pour les afficcher dans l'image View ivPlan
-     * @param fileName
-     * @param btmPlanEtage
-     * @return
      */
     public static String saveBitmapToPNGFile(String fileName, Bitmap btmPlanEtage){
         java.io.File myDir = new java.io.File(DirectoryPath);
@@ -63,9 +60,6 @@ public class File {
      * fonction qui ajoute une page contenant l'image bitmapPlan au document pdfDocument
      * elle retourne pdfDocument avec la page supplementaire
      * A FAIRE : gerer screenDensity (ne vaut pas 0.75 pour toutes les tablettes, il faut la récupérer aprs la methode onCreate de MainActivity)
-     * @param bitmapPlan
-     * @param pdfDocument
-     * @return
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static PdfDocument addPageWithBitmapToPdf(Bitmap bitmapPlan, PdfDocument pdfDocument){
@@ -87,9 +81,6 @@ public class File {
      * prend en entrée le nom du fichier et le pdfDocument à sauvegarder
      * elle retourne une string correspondant à l'uri du fichier
      * utile pour sauvegarder les pdf à uploader sur firebase
-     * @param fileName
-     * @param pdfDocument
-     * @return
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public static String savePdfDocument(String fileName, PdfDocument pdfDocument){
