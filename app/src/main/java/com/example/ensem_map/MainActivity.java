@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     MyAdapter myAdapter;
     BitmapHelper bitmapHelper;
-
+    DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,16 +69,22 @@ public class MainActivity extends AppCompatActivity {
         //initialisation de l'instance de la classe BitmapHelper
         bitmapHelper = new BitmapHelper(getResources());
 
+        //initialisation de l'instance de la classe DatabaseHelper
+        databaseHelper = new DatabaseHelper(MainActivity.this, "ENSEMMapDataBase.db",1);
+        databaseHelper.initDatabase();
+
         btnRecherche.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
                 //A FAIRE : gerer le nom des fichiers (itinéraire rechercher et date+heure de recherche)
-                String fileName = "plan";
+                /*String fileName = "plan";
                 File.createFolder();
                 String uriString = File.savePdfDocument(fileName,File.addPageWithBitmapToPdf(
                         bitmapHelper.loadBitmapFromDrawable(R.drawable.premier),File.addPageWithBitmapToPdf(bitmapHelper.loadBitmapFromDrawable(R.drawable.rdc), new PdfDocument())));
-                FirebaseHelper.uploadFile(uriString,fileName);
+                /FirebaseHelper.uploadFile(uriString,fileName);*/
+
+                System.out.println(databaseHelper.makeQuery("select * from pointtable"));
             }
         });
     }
