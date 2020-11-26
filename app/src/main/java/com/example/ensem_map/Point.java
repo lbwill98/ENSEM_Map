@@ -2,7 +2,7 @@ package com.example.ensem_map;
 
 /**
  * un objet Point est un point sur les plans et un noeud du graphparliste
- * voir fichier dessin pour visualiser l'emplacement des points
+ * voir fichier point-rdc pour visualiser l'emplacement des points au rdc
  * les informations des points sont stockées dans la base de données
  */
 public class Point {
@@ -39,7 +39,6 @@ public class Point {
     public int[] getVoisins() {
         return voisins;
     }
-
 
     /**
      *fonction pour obtenir la distance entre deux points

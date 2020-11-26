@@ -35,7 +35,7 @@ public class GrapheParListe {
 	/**
 	 * tester s'il existe un arc entre deux sommets
 	 */
-	public boolean arc (Point	source,	Point	dest){
+	public boolean arc (Point source, Point dest){
 		boolean	arcExiste= false;
 		if(	adj[(source.getId())]!=null) {
 			Liste a = adj[(source.getId())];
@@ -82,7 +82,7 @@ public class GrapheParListe {
 		}
 		//construire l'ensemble S selon Dijkstra
 		while(D.size()!=0){
-			//on cherchel'�l�ment qui a la plus petite distance
+			//on cherchel'élément qui a la plus petite distance
 			int	indice_min=0;
 			double	dm=INFINI;
 			int	sm=(D.elementAt(0)).idPoint;

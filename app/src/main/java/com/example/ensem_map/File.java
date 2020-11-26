@@ -19,6 +19,12 @@ import java.io.IOException;
  */
 public class File {
     public static final String DirectoryPath = Environment.getExternalStorageDirectory().toString()+"/ENSEM_Map";
+    public static String[] etagesNames = {"rdj.png","rdc.png","premier.png","deuxieme.png","troisieme.png"};
+    /*public static final String rdjName = "rdj.png";
+    public static final String rdcName = "rdc.png";
+    public static final String premierName = "premier.png";
+    public static final String deuxiemeName = "deuxieme.png";
+    public static final String troisiemeName = "troisieme.png";*/
 
     //A FAIRE : gerer la densité de l'ecran , controlleur avec getResources().getDisplayMetrics().density
     public static double screenDensity = 0.75;

@@ -164,6 +164,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public String getIdDestination(String[] recherche){
         String id = "0";
         try {
+            if(recherche.length==3) {
+                id = makeQuery("Select IdPoint from PointTable WHERE NomSalle = \""+ recherche[0]+" "+ recherche[1]+" "+ recherche[2]+"\"").get(0);
+            }
             if(recherche.length==2) {
                 id = makeQuery("Select IdPoint from PointTable WHERE PrenomPersonnel = \"" + recherche[0] + "\" and NomPersonnel = \"" + recherche[1] + "\" or NomSalle = \""+ recherche[0]+" "+ recherche[1]+"\"").get(0);
             }

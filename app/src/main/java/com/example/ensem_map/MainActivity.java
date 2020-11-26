@@ -38,8 +38,6 @@ public class MainActivity extends AppCompatActivity {
     com.google.android.material.tabs.TabLayout tableLayout;
     ViewPager2 vpPlan;
 
-    static int[] imagesPlan = {R.drawable.rdj,R.drawable.rdc,R.drawable.premier, R.drawable.deuxieme,R.drawable.troisieme};
-
     MyAdapter myAdapter;
     BitmapHelper bitmapHelper;
     DatabaseHelper databaseHelper;
@@ -61,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         vpPlan = findViewById(R.id.vpPlan);
 
         //On met les images des plans des étages sur le viewPager avec la class myAdapter
-        myAdapter = new MyAdapter(imagesPlan);
+        myAdapter = new MyAdapter();
         vpPlan.setAdapter(myAdapter);
 
         //On se met par default sur l'étage 0
@@ -83,25 +81,31 @@ public class MainActivity extends AppCompatActivity {
         //on creer le graphparliste et on lance la recherche de chemin depuis le point 0 vers tous les autres points
         Vector<Point> points = databaseHelper.lecturePoint();
         GrapheParListe grapheParListe = new GrapheParListe(points);
-        Vector<Element>S=grapheParListe.plusCourtChemin(0,points);
-        String[] res = GrapheParListe.chemin(0,S,points);
-
+        Vector<Element> S = grapheParListe.plusCourtChemin(0,points);
+        String[] chemins = GrapheParListe.chemin(0,S,points);
 
         btnRecherche.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
                 //A FAIRE : gerer le nom des fichiers (itinéraire rechercher et date+heure de recherche)
-                String idDestination = databaseHelper.getIdDestination(etRecherche.getText().toString().split(" "));
-                String[] cheminId = res[GrapheParListe.indicsommetDansS(S,Integer.parseInt(idDestination))].split("-");
+                int idDestination = Integer.parseInt(databaseHelper.getIdDestination(etRecherche.getText().toString().split(" ")));
+                String[] cheminId = chemins[GrapheParListe.indicsommetDansS(S,idDestination)].split("-");
+                Vector<Point> cheminPoint = databaseHelper.listeIdToListePoint(cheminId);
+                Route.setEtagesPresents(cheminPoint);
+
                 Bitmap rdcBtm = bitmapHelper.loadBitmapFromDrawable(R.drawable.rdc);
                 Canvas canvasBtm = new Canvas(rdcBtm);
-                bitmapHelper.drawRoute(canvasBtm,databaseHelper.listeIdToListePoint(cheminId));
+                bitmapHelper.drawRoute(canvasBtm,cheminPoint);
+
                 String fileName = "plan";
                 File.createFolder();
-                String uriString = File.savePdfDocument(fileName,File.addPageWithBitmapToPdf(
-                        bitmapHelper.loadBitmapFromDrawable(R.drawable.premier),File.addPageWithBitmapToPdf(rdcBtm, new PdfDocument())));
+                File.saveBitmapToPNGFile("rdc",rdcBtm);
+                String uriString = File.savePdfDocument(fileName,File.addPageWithBitmapToPdf(rdcBtm, new PdfDocument()));
                 FirebaseHelper.uploadFile(uriString,fileName);
+                vpPlan.setAdapter(myAdapter);
+                vpPlan.setCurrentItem(1);
+
                 //System.out.println(databaseHelper.makeQuery("select * from pointtable"));
             }
         });

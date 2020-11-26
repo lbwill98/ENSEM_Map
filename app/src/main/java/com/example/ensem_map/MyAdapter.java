@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 
+import java.util.ArrayList;
+
 /**
  * class pour l'affichage des images des plans dans le viewPager
  * A FAIRE : commenter les fonctions
@@ -19,11 +21,9 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
  */
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
-    private final int[] images;
+    private static final int[] images = {R.drawable.rdj,R.drawable.rdc,R.drawable.premier, R.drawable.deuxieme,R.drawable.troisieme};
 
-    public MyAdapter(int[] images) {
-        this.images = images;
-    }
+    public MyAdapter() {}
 
     @NonNull
     @Override
@@ -34,7 +34,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.imageView.setImage(ImageSource.resource(images[position]));
+        if(Route.etagesPresents.contains(position-1)){
+            holder.imageView.setImage(ImageSource.uri(File.DirectoryPath+"/"+File.etagesNames[position]));
+        }else {
+            holder.imageView.setImage(ImageSource.resource(images[position]));
+        }
         if(position == 1){
             //zoom sur l'emplacement de la tablette dans l'ensem
             holder.imageView.setScaleAndCenter(0.5F, new PointF(2000, 5500));
