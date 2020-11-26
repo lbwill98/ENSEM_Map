@@ -11,24 +11,19 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 /**
  * class pour gerer les QRcode
- * le but est de fournir une bitmap : de la bonne taille (celle de l'imageView, ivQRcode)
- *                                    correspondant au QRcode de l'attribut string (le lien de telechargement du pdf via firebase)
+ * le but est de fournir une bitmap : - de la bonne taille (celle de l'imageView, ivQRcode)
+ *                                    - correspondant au QRcode de l'attribut string (le lien de telechargement du pdf via firebase)
  */
 public class QRcode {
 
-    private String string;
+    private final String string;
     private final int width,height;
-    private Bitmap bitmap;
+    private final Bitmap bitmap;
 
     public QRcode(String string, int width, int height) {
         this.string = string;
         this.width = width;
         this.height = height;
-        this.bitmap = createBitmap();
-    }
-
-    public void setString(String string) {
-        this.string = string;
         this.bitmap = createBitmap();
     }
 

@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * classe permettant de gerer la base de données
@@ -134,20 +135,63 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return new ArrayAdapter<>(context, android.R.layout.simple_list_item_1,arrayList.toArray(new String[0]));
     }
 
-    //cree un vector contenant les Points dans l'ordre d'apparition dans le fichier sations
-    /*public Vector<Point> lecturePoint() {
-        Vector<Point> lecturePoint = new Vector<Point>();
+    /**
+     *création un vector contenant les Points dans l'ordre d'apparition dans la base de données
+     * utile pour la création du graphParliste
+     */
+    public Vector<Point> lecturePoint() {
+        Vector<Point> lecturePoint = new Vector<>();
         ArrayList<String> arrayList = makeQuery("select idpoint,x,y,etage,pointsvoisins from pointtable");
         int n = arrayList.size();
         for (int i=0; i<n; i++){
-            String string[] = arrayList.get(i).split(" ");
+            String[] string = arrayList.get(i).split(" ");
             String[] sVoisins = string[4].split(",");
-            int iVoisins[] = new int[sVoisins.length];
+            int[] iVoisins = new int[sVoisins.length];
             for(int j=0;j<sVoisins.length; j++){
                 iVoisins[j]=Integer.parseInt(sVoisins[j]);
             }
             lecturePoint.add(new Point(Integer.parseInt(string[0]),Integer.parseInt(string[1]),Integer.parseInt(string[2]),Integer.parseInt(string[3]),iVoisins));
         }
         return(lecturePoint);
-    }*/
+    }
+
+    // recherche = etRecherche.getText().toString().split(" ");
+
+    /**
+     * fonction pour retourner l'id du point de destination à partir de la recherche dans l'etRecherche
+     * retourne l'id à partir du nom de la salle ou de l'identité du personnel
+     */
+    public String getIdDestination(String[] recherche){
+        String id = "0";
+        try {
+            if(recherche.length==2) {
+                id = makeQuery("Select IdPoint from PointTable WHERE PrenomPersonnel = \"" + recherche[0] + "\" and NomPersonnel = \"" + recherche[1] + "\" or NomSalle = \""+ recherche[0]+" "+ recherche[1]+"\"").get(0);
+            }
+            if(recherche.length==1){
+                id = makeQuery("Select IdPoint from PointTable WHERE NomSalle = \""+ recherche[0]+"\"").get(0);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return(id);
+    }
+
+    /**
+     * fonction qui retourne la liste des points correspondants aux id contenus dans le tableau de string en entrée
+     * utile pour tracer les points et le chemin sur le plan
+     */
+   public Vector<Point> listeIdToListePoint(String[] cheminId){
+       Vector<Point> cheminPoint = new Vector<>();
+       for (String s : cheminId) {
+           ArrayList<String> arrayList = makeQuery("select idpoint,x,y,etage,pointsvoisins from pointtable where idpoint = " + s);
+           String[] string = arrayList.get(0).split(" ");
+           String[] sVoisins = string[4].split(",");
+           int[] iVoisins = new int[sVoisins.length];
+           for (int j = 0; j < sVoisins.length; j++) {
+               iVoisins[j] = Integer.parseInt(sVoisins[j]);
+           }
+           cheminPoint.add(new Point(Integer.parseInt(string[0]), Integer.parseInt(string[1]), Integer.parseInt(string[2]), Integer.parseInt(string[3]), iVoisins));
+       }
+       return cheminPoint;
+   }
 }
