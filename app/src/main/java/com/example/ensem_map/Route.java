@@ -11,6 +11,8 @@ import java.util.Vector;
 public class Route {
 
     public static ArrayList<Integer> etagesPresents = new ArrayList<>();
+    public static Vector<Element> S = new Vector<>();
+    public static String[] chemins;
 
     /**
      *fonction qui retourne la liste des etages parcourus par le chemin

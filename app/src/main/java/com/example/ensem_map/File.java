@@ -74,10 +74,8 @@ public class File {
         int pageHeight = (int)(BitmapHelper.height* screenDensity) ;
         PdfDocument.PageInfo myPageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, pageNumber).create();
         PdfDocument.Page myPage = pdfDocument.startPage(myPageInfo);
-
         Canvas canvasPage = myPage.getCanvas();
         canvasPage.drawBitmap(bitmapPlan, 0, 0, null);
-
         pdfDocument.finishPage(myPage);
         return pdfDocument;
     }

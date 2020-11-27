@@ -41,10 +41,17 @@ public class FirebaseHelper {
                     @Override
                     public void onComplete(@NonNull Task<Uri> task) {
                         MainActivity.showQRCode(Objects.requireNonNull(uriTask.getResult()).toString());
+                        MainActivity.progressDialog.dismiss();
                     }
                 });
             }
-        });
+        })/*.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                MainActivity.progressDialog.setMessage("Téléchargement des fichiers");
+                MainActivity.progressDialog.setProgress((int)(MainActivity.progressDialog.getProgress()+(100-MainActivity.progressDialog.getProgress())*snapshot.getBytesTransferred()/snapshot.getTotalByteCount()));
+            }
+        })*/;
     }
 }
 

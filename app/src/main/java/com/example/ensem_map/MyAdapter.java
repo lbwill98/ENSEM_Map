@@ -1,6 +1,5 @@
 package com.example.ensem_map;
 
-
 import android.graphics.PointF;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
-
-import java.util.ArrayList;
 
 /**
  * class pour l'affichage des images des plans dans le viewPager

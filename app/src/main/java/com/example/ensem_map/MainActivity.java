@@ -9,12 +9,14 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.pdf.PdfDocument;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     static ImageView ivQRCode;
     com.google.android.material.tabs.TabLayout tableLayout;
     ViewPager2 vpPlan;
+
+    static ProgressDialog progressDialog;
 
     MyAdapter myAdapter;
     BitmapHelper bitmapHelper;
@@ -78,37 +82,73 @@ public class MainActivity extends AppCompatActivity {
         //on place l'adapteur sur l'autoCompletTextView
         etRecherche.setAdapter(databaseHelper.createAdapter(MainActivity.this));
 
+        //on affecte la bonne valeur de densité d'écran à la variable density de File, utile pour la génération des fichiers
+        File.screenDensity = getResources().getDisplayMetrics().density;
+
         //on creer le graphparliste et on lance la recherche de chemin depuis le point 0 vers tous les autres points
         Vector<Point> points = databaseHelper.lecturePoint();
         GrapheParListe grapheParListe = new GrapheParListe(points);
-        Vector<Element> S = grapheParListe.plusCourtChemin(0,points);
-        String[] chemins = GrapheParListe.chemin(0,S,points);
+        Route.S = grapheParListe.plusCourtChemin(0,points);
+        Route.chemins = GrapheParListe.chemin(0,Route.S,points);
 
         btnRecherche.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+
             @Override
             public void onClick(View view) {
-                //A FAIRE : gerer le nom des fichiers (itinéraire rechercher et date+heure de recherche)
-                int idDestination = Integer.parseInt(databaseHelper.getIdDestination(etRecherche.getText().toString().split(" ")));
-                String[] cheminId = chemins[GrapheParListe.indicsommetDansS(S,idDestination)].split("-");
-                Vector<Point> cheminPoint = databaseHelper.listeIdToListePoint(cheminId);
-                Route.setEtagesPresents(cheminPoint);
-
-                Bitmap rdcBtm = bitmapHelper.loadBitmapFromDrawable(R.drawable.rdc);
-                Canvas canvasBtm = new Canvas(rdcBtm);
-                bitmapHelper.drawRoute(canvasBtm,cheminPoint);
-
-                String fileName = "plan";
-                File.createFolder();
-                File.saveBitmapToPNGFile("rdc",rdcBtm);
-                String uriString = File.savePdfDocument(fileName,File.addPageWithBitmapToPdf(rdcBtm, new PdfDocument()));
-                FirebaseHelper.uploadFile(uriString,fileName);
-                vpPlan.setAdapter(myAdapter);
-                vpPlan.setCurrentItem(1);
-
-                //System.out.println(databaseHelper.makeQuery("select * from pointtable"));
+                MyAsyncTask myAsyncTask = new MyAsyncTask();
+                myAsyncTask.execute();
             }
         });
+
+    }
+
+    /**
+     * tache asynchrone qui permet d'exécuter les différentes fonctions de la recherche en parralèle de l'affichage des éléments graphiques
+     * on affiche un progressDialog pendant l'exécution de ces fonctions
+     */
+    private class MyAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+        @Override
+        protected Void doInBackground(Void... arg) {
+
+            progressDialog.setMessage("Recherche de l'itinéraire");
+            int idDestination = Integer.parseInt(databaseHelper.getIdDestination(etRecherche.getText().toString().split(" ")));
+            String[] cheminId = Route.chemins[GrapheParListe.indicsommetDansS(Route.S,idDestination)].split("-");
+            Vector<Point> cheminPoint = databaseHelper.listeIdToListePoint(cheminId);
+            Route.setEtagesPresents(cheminPoint);
+
+            progressDialog.setMessage("Dessin de l'itinéraire");
+            Bitmap rdcBtm = bitmapHelper.loadBitmapFromDrawable(R.drawable.rdc);
+            Canvas canvasBtm = new Canvas(rdcBtm);
+            bitmapHelper.drawRoute(canvasBtm,cheminPoint);
+
+            progressDialog.setMessage("Création des fichiers");
+            //A FAIRE : gerer le nom des fichiers (itinéraire rechercher et date+heure de recherche)
+            String fileName = "plan";
+            File.createFolder();
+            File.saveBitmapToPNGFile("rdc",rdcBtm);
+            String uriString = File.savePdfDocument(fileName,File.addPageWithBitmapToPdf(rdcBtm, new PdfDocument()));
+
+            progressDialog.setMessage("Téléchargement des fichiers");
+            FirebaseHelper.uploadFile(uriString,fileName);
+
+            return  null;
+        }
+
+        @Override
+        protected void onPostExecute(Void a) {
+            vpPlan.setAdapter(myAdapter);
+            vpPlan.setCurrentItem(1);
+        }
     }
 
     /**
