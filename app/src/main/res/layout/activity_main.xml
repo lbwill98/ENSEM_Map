@@ -86,7 +86,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="9"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    tools:ignore="ExtraText">
 
                     <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/swtcMobiliteReduite"
@@ -95,7 +96,9 @@
                         android:layout_weight="1"
                         android:text="Personne à Mobilité réduite"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        />
+                        />
                 </LinearLayout>
 
                 <LinearLayout

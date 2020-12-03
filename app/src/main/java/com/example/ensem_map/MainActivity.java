@@ -11,6 +11,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -54,13 +55,36 @@ public class MainActivity extends AppCompatActivity {
         //on vérifie les permissions
         checkPermissions();
 
-        //Assiciations des attributs avec éléments graphques xml
+        //Assiniations des attributs avec éléments graphques xml
         etRecherche = findViewById(R.id.etRecherche);
         swtcMobiliteReduite = findViewById(R.id.swtcMobiliteReduite);
         btnRecherche = findViewById(R.id.btnRecherche);
         ivQRCode = findViewById(R.id.ivQRCode);
         tableLayout = findViewById(R.id.tableLayout);
         vpPlan = findViewById(R.id.vpPlan);
+
+        // Save switch state in shared preferences
+        SharedPreferences sharedPreferences = getSharedPreferences( "save", MODE_PRIVATE);
+        swtcMobiliteReduite.setChecked(sharedPreferences.getBoolean("value",true));
+        swtcMobiliteReduite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(swtcMobiliteReduite.isChecked()){
+                    //when switch checked
+                    SharedPreferences.Editor editor = getSharedPreferences("save",MODE_PRIVATE).edit();
+                    editor.putBoolean("value", true);
+                    editor.apply();
+                    swtcMobiliteReduite.setChecked(true);
+                }
+                else{
+                    // when switch unchecked
+                    SharedPreferences.Editor editor = getSharedPreferences("save",MODE_PRIVATE).edit();
+                    editor.putBoolean("value", false);
+                    editor.apply();
+                    swtcMobiliteReduite.setChecked(false);
+                }
+            }
+        });
 
         //On met les images des plans des étages sur le viewPager avec la class myAdapter
         myAdapter = new MyAdapter();
@@ -204,4 +228,9 @@ public class MainActivity extends AppCompatActivity {
         QRcode qRcode = new QRcode(string,ivQRCode.getWidth(),ivQRCode.getHeight());
         ivQRCode.setImageBitmap(qRcode.getBitmap());
     }
+
+    /**
+     * initialiser le switch et ensuite vérifier son état
+     */
+
 }
