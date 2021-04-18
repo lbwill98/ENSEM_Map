@@ -26,6 +26,7 @@ public class BitmapHelper {
         this.options = new BitmapFactory.Options();
         this.options.inScaled = false;
         this.options.inMutable = true;
+        //this.options.inPreferredConfig = Bitmap.Config.RGB_565;
         this.resources = resources;
     }
 

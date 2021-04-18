@@ -15,6 +15,9 @@ public class GrapheParListe {
 	 */
 	public GrapheParListe(Vector<Point> lecturePoint) {
 		Vector<String>inputG = remplirGraphe(lecturePoint);
+		/*for(String s:inputG){
+			System.out.println(s);
+		}*/
 		int nb_sommets = inputG.size();
 		adj	= new	Liste[nb_sommets];
 		for(int	i = 0; i < nb_sommets; i++) 

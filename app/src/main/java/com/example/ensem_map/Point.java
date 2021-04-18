@@ -48,5 +48,9 @@ public class Point {
     public double distanceTo(Point point){
         return Math.sqrt((this.x-point.x)*(this.x-point.x)+(this.y-point.y)*(this.y-point.y));
     }
+
+    public String toString(){
+        return("id=" + id +" x="+x +" y="+y);
+    }
 }
 

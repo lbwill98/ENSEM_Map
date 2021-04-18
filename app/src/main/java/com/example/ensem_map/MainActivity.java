@@ -114,6 +114,9 @@ public class MainActivity extends AppCompatActivity {
         GrapheParListe grapheParListe = new GrapheParListe(points);
         Route.S = grapheParListe.plusCourtChemin(0,points);
         Route.chemins = GrapheParListe.chemin(0,Route.S,points);
+        for(String s:Route.chemins){
+            System.out.println(s);
+        }
 
         btnRecherche.setOnClickListener(new View.OnClickListener() {
 

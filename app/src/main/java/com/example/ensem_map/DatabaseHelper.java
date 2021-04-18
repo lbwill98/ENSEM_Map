@@ -130,7 +130,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public ArrayAdapter<String> createAdapter(Context context){
         ArrayList<String> arrayList;
-        arrayList = makeQuery("Select PrenomPersonnel, NomPersonnel from PointTable WHERE PrenomPersonnel not null");
+        arrayList = makeQuery("Select PrenomPersonnel1, NomPersonnel1 from PointTable WHERE PrenomPersonnel1 not null");
+        arrayList.addAll(makeQuery("Select PrenomPersonnel2, NomPersonnel2 from PointTable WHERE PrenomPersonnel2 not null"));
+        arrayList.addAll(makeQuery("Select PrenomPersonnel2, NomPersonnel3 from PointTable WHERE PrenomPersonnel3 not null"));
         arrayList.addAll(makeQuery("Select NomSalle from PointTable WHERE NomSalle not NULL"));
         return new ArrayAdapter<>(context, android.R.layout.simple_list_item_1,arrayList.toArray(new String[0]));
     }
@@ -168,7 +170,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 id = makeQuery("Select IdPoint from PointTable WHERE NomSalle = \""+ recherche[0]+" "+ recherche[1]+" "+ recherche[2]+"\"").get(0);
             }
             if(recherche.length==2) {
-                id = makeQuery("Select IdPoint from PointTable WHERE PrenomPersonnel = \"" + recherche[0] + "\" and NomPersonnel = \"" + recherche[1] + "\" or NomSalle = \""+ recherche[0]+" "+ recherche[1]+"\"").get(0);
+                id = makeQuery("Select IdPoint from PointTable WHERE PrenomPersonnel1 = \"" + recherche[0] + "\" and NomPersonnel1 = \"" + recherche[1] +
+                                                                      "\" or PrenomPersonnel2 = \"" + recherche[0] + "\" and NomPersonnel2 = \"" + recherche[1] +
+                                                                      "\" or PrenomPersonnel3 = \"" + recherche[0] + "\" and NomPersonnel3 = \"" + recherche[1] +
+                                                                      "\" or NomSalle = \""+ recherche[0]+" "+ recherche[1]+"\"").get(0);
             }
             if(recherche.length==1){
                 id = makeQuery("Select IdPoint from PointTable WHERE NomSalle = \""+ recherche[0]+"\"").get(0);
