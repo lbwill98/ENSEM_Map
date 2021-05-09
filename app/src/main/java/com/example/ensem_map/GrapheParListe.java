@@ -1,5 +1,6 @@
 package com.example.ensem_map;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -9,15 +10,17 @@ import java.util.Vector;
 public class GrapheParListe {
 
 	public Liste[] adj; //un tableau de listes chainées
+	public static HashMap<Integer, Integer> idHahMap;
 
 	/**
 	 * constructeur
 	 */
 	public GrapheParListe(Vector<Point> lecturePoint) {
-		Vector<String>inputG = remplirGraphe(lecturePoint);
-		/*for(String s:inputG){
-			System.out.println(s);
-		}*/
+		idHahMap = new HashMap<Integer, Integer>();
+		for (int i=0; i<lecturePoint.size();i++) {
+			idHahMap.put(lecturePoint.get(i).getId(),i);
+		}
+		Vector<String>inputG = remplirGraphe(lecturePoint,idHahMap);
 		int nb_sommets = inputG.size();
 		adj	= new	Liste[nb_sommets];
 		for(int	i = 0; i < nb_sommets; i++) 
@@ -27,8 +30,9 @@ public class GrapheParListe {
 		for(int	k=0; k<nb_sommets; k++) {
 			s=inputG.elementAt(k).split(",");
 			for (int l=1;l<s.length;l=l+2) {
-				int	i = Integer.parseInt(s[0]);
-				Point	j =lecturePoint.elementAt(Integer.parseInt(s[l]));
+				//System.out.println(s[0]+"     "+s[l]+"     "+s[l+1]);
+				int	i = idHahMap.get(Integer.parseInt(s[0]));
+				Point	j =lecturePoint.elementAt(idHahMap.get(Integer.parseInt(s[l])));
 				double	val=Double.parseDouble(s[l+1]);
 				adj[i] = new Liste(j, val, adj[i]);
 			}
@@ -40,8 +44,8 @@ public class GrapheParListe {
 	 */
 	public boolean arc (Point source, Point dest){
 		boolean	arcExiste= false;
-		if(	adj[(source.getId())]!=null) {
-			Liste a = adj[(source.getId())];
+		if(	adj[idHahMap.get(source.getId())]!=null) {
+			Liste a = adj[idHahMap.get(source.getId())];
 			while(a !=null) {
 				if(a.num_noeud.getId()==(dest.getId())) arcExiste =true;
 				if(arcExiste) a=null;
@@ -58,7 +62,7 @@ public class GrapheParListe {
 	public  double valeurArc(Point source,Point	dest){
 		double	val = 9999;
 		boolean	arcExiste=false;
-		Liste a = adj[(source.getId())];
+		Liste a = adj[idHahMap.get(source.getId())];
 		while(a !=null) {
 			if(a.num_noeud== dest) {
 				val = a.valeur; 
@@ -129,7 +133,7 @@ public class GrapheParListe {
 			int j=i;
 			while(S.elementAt(j).idPrecedent!=num_sommet) {
 				chemin[i]=lecturePoint.elementAt(S.elementAt(j).idPrecedent).getId()+"-"+chemin[i];
-				j=indicsommetDansS( S, S.elementAt(j).idPrecedent);
+				j= indicesommetDansS( S, S.elementAt(j).idPrecedent);
 			}
 			chemin[i]=lecturePoint.elementAt(num_sommet).getId()+"-"+chemin[i];
 		}
@@ -137,32 +141,34 @@ public class GrapheParListe {
 	}
 
 	/**
-	 * les indices des sommets dans S et lectureStatiions sont differents donc il faut cette methode qui determine l'indice d'un sommet dans S
+	 * les indices des sommets dans S et lecturePoints sont differents donc il faut cette methode qui determine l'indice d'un sommet dans S
 	 */
-	public static int indicsommetDansS(Vector<Element> S,int sommet) {
+	public static int indicesommetDansS(Vector<Element> S, int sommet) {
 		int i=0;
-		while(sommet!=S.elementAt(i).idPoint) {
-			i++;
-			if(i>S.size()) {
-				i=-1;
-				break;
+		for(Element e : S){
+			if(e.idPoint==sommet){
+				return i;
 			}
+			i++;
 		}
-		return(i);
+		System.out.println(sommet);
+		return -1; //must have error somewhere if -1 is returned
 	}
 
-	public static Vector<String> remplirGraphe(Vector<Point> lecturePoint){
+	public static Vector<String> remplirGraphe(Vector<Point> lecturePoint, HashMap<Integer, Integer> idHahMap){
 		Vector<String> graphe = new Vector<>();
 		for (int i=0; i<lecturePoint.size();i++) {
-			graphe.add(predecesseurs( lecturePoint,lecturePoint.get(i)));
+			graphe.add(predecesseurs( lecturePoint,lecturePoint.get(i), idHahMap));
 		}
 		return(graphe);
 	}
 
-	public static String predecesseurs(Vector<Point> lecturePoint, Point point){
+	public static String predecesseurs(Vector<Point> lecturePoint, Point point, HashMap<Integer, Integer> idHahMap){
 		StringBuilder string = new StringBuilder(Integer.toString(point.getId()));
 		for (int i=0; i<point.getVoisins().length;i++){
-			string.append(",").append(point.getVoisins()[i]).append(",").append(point.distanceTo(lecturePoint.get(point.getVoisins()[i])));
+			string.append(",");
+			string.append(point.getVoisins()[i]).append(",");
+			string.append(point.distanceTo(lecturePoint.get(idHahMap.get(point.getVoisins()[i]))));
 		}
 		return string.toString();
 	}

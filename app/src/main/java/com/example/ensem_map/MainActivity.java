@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     MyAdapter myAdapter;
     BitmapHelper bitmapHelper;
     DatabaseHelper databaseHelper;
+    GrapheParListe grapheParListe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         //on vérifie les permissions
         checkPermissions();
 
-        //Assiniations des attributs avec éléments graphques xml
+        //Assignations des attributs avec éléments graphques xml
         etRecherche = findViewById(R.id.etRecherche);
         swtcMobiliteReduite = findViewById(R.id.swtcMobiliteReduite);
         btnRecherche = findViewById(R.id.btnRecherche);
@@ -111,8 +112,11 @@ public class MainActivity extends AppCompatActivity {
 
         //on creer le graphparliste et on lance la recherche de chemin depuis le point 0 vers tous les autres points
         Vector<Point> points = databaseHelper.lecturePoint();
-        GrapheParListe grapheParListe = new GrapheParListe(points);
+        grapheParListe = new GrapheParListe(points);
         Route.S = grapheParListe.plusCourtChemin(0,points);
+        for(Element e : Route.S){
+            System.out.println(e.idPoint+"          &&&&&&&&&&&&&&&            &");
+        }
         Route.chemins = GrapheParListe.chemin(0,Route.S,points);
         for(String s:Route.chemins){
             System.out.println(s);
@@ -149,7 +153,11 @@ public class MainActivity extends AppCompatActivity {
 
             progressDialog.setMessage("Recherche de l'itinéraire");
             int idDestination = Integer.parseInt(databaseHelper.getIdDestination(etRecherche.getText().toString().split(" ")));
-            String[] cheminId = Route.chemins[GrapheParListe.indicsommetDansS(Route.S,idDestination)].split("-");
+            System.out.println(idDestination);
+            String[] cheminId = Route.chemins[GrapheParListe.indicesommetDansS(Route.S,GrapheParListe.idHahMap.get(idDestination))].split("-");
+            for(String s : cheminId){
+                System.out.println(s);
+            }
             Vector<Point> cheminPoint = databaseHelper.listeIdToListePoint(cheminId);
             Route.setEtagesPresents(cheminPoint);
 

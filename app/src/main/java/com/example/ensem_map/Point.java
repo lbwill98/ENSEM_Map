@@ -12,7 +12,7 @@ public class Point {
     //private Point precedent, suivant;//precedent et suivant, peut-etre utile pour gerer les étages...
     //double ditanceToPrecedent;
 
-    public Point(int id, int x, int y, int etage, int[] voisins) {
+    public Point( int id, int x, int y, int etage, int[] voisins) {
         this.id = id;
         this.x = x;
         this.y = y;
