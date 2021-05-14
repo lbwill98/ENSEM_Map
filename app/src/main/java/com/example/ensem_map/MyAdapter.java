@@ -18,7 +18,7 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
  */
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
-    private static final int[] images = {R.drawable.rdj,R.drawable.rdc,R.drawable.premier, R.drawable.deuxieme,R.drawable.troisieme};
+    public static final int[] images = {R.drawable.rdj,R.drawable.rdc,R.drawable.premier, R.drawable.deuxieme,R.drawable.troisieme};
 
     public MyAdapter() {}
 

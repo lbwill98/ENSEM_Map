@@ -110,16 +110,13 @@ public class MainActivity extends AppCompatActivity {
         //on affecte la bonne valeur de densité d'écran à la variable density de File, utile pour la génération des fichiers
         File.screenDensity = getResources().getDisplayMetrics().density;
 
-        //on creer le graphparliste et on lance la recherche de chemin depuis le point 0 vers tous les autres points
+        //on cree le graphparliste et on lance la recherche de chemin depuis le point 0 vers tous les autres points
         Vector<Point> points = databaseHelper.lecturePoint();
         grapheParListe = new GrapheParListe(points);
         Route.S = grapheParListe.plusCourtChemin(0,points);
-        for(Element e : Route.S){
-            System.out.println(e.idPoint+"          &&&&&&&&&&&&&&&            &");
-        }
         Route.chemins = GrapheParListe.chemin(0,Route.S,points);
         for(String s:Route.chemins){
-            System.out.println(s);
+            //System.out.println(s);
         }
 
         btnRecherche.setOnClickListener(new View.OnClickListener() {
@@ -143,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             progressDialog = new ProgressDialog(MainActivity.this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setCancelable(false);
+            //progressDialog.setCancelable(false);
             progressDialog.show();
         }
 
@@ -155,26 +152,26 @@ public class MainActivity extends AppCompatActivity {
             int idDestination = Integer.parseInt(databaseHelper.getIdDestination(etRecherche.getText().toString().split(" ")));
             System.out.println(idDestination);
             String[] cheminId = Route.chemins[GrapheParListe.indicesommetDansS(Route.S,GrapheParListe.idHahMap.get(idDestination))].split("-");
-            for(String s : cheminId){
-                System.out.println(s);
-            }
             Vector<Point> cheminPoint = databaseHelper.listeIdToListePoint(cheminId);
             Route.setEtagesPresents(cheminPoint);
 
-            progressDialog.setMessage("Dessin de l'itinéraire");
-            Bitmap rdcBtm = bitmapHelper.loadBitmapFromDrawable(R.drawable.rdc);
-            Canvas canvasBtm = new Canvas(rdcBtm);
-            bitmapHelper.drawRoute(canvasBtm,cheminPoint);
-
-            progressDialog.setMessage("Création des fichiers");
-            //A FAIRE : gerer le nom des fichiers (itinéraire rechercher et date+heure de recherche)
             String fileName = "plan";
+            PdfDocument pdfDocument = new PdfDocument();
             File.createFolder();
-            File.saveBitmapToPNGFile("rdc",rdcBtm);
-            String uriString = File.savePdfDocument(fileName,File.addPageWithBitmapToPdf(rdcBtm, new PdfDocument()));
+
+            for(int etage : Route.etagesPresents){
+                Bitmap Btm = bitmapHelper.loadBitmapFromDrawable(MyAdapter.images[etage+1]); //etage var goes from -1 to 2 and we want a value from 0 to 3 for images tab index
+                Canvas canvasBtm = new Canvas(Btm);
+                bitmapHelper.drawRoute(canvasBtm, Route.getPointsPresents(cheminPoint,etage));
+                File.saveBitmapToPNGFile(File.etagesNames[etage+1],Btm);
+                File.addPageWithBitmapToPdf(Btm, pdfDocument);
+            }
+            String uriString = File.savePdfDocument(fileName, pdfDocument);
+
 
             progressDialog.setMessage("Téléchargement des fichiers");
             FirebaseHelper.uploadFile(uriString,fileName);
+            progressDialog.dismiss();
 
             return  null;
         }

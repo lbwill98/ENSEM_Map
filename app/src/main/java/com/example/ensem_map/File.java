@@ -49,7 +49,7 @@ public class File {
      */
     public static String saveBitmapToPNGFile(String fileName, Bitmap btmPlanEtage){
         java.io.File myDir = new java.io.File(DirectoryPath);
-        java.io.File file = new java.io.File(myDir, fileName+".png");
+        java.io.File file = new java.io.File(myDir, fileName);
         if (file.exists()) file.delete ();
         try {
             FileOutputStream out = new FileOutputStream(file);

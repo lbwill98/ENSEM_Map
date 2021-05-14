@@ -27,4 +27,17 @@ public class Route {
         }
         Route.etagesPresents = etagesPresents;
     }
+
+    /**
+     *fonction qui retourne la liste des poins présents à un étage (-1 0 1 2 ou 3)
+     */
+    public static Vector<Point> getPointsPresents(Vector<Point> cheminPoint, int etage){
+        Vector<Point>  pointsPresents = new Vector<Point>();
+        for (Point p : cheminPoint){
+            if (p.getEtage() == etage){
+                pointsPresents.add(p);
+            }
+        }
+        return pointsPresents;
+    }
 }
