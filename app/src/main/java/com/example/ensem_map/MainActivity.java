@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         Route.S = grapheParListe.plusCourtChemin(0,points);
         Route.chemins = GrapheParListe.chemin(0,Route.S,points);
         for(String s:Route.chemins){
-            //System.out.println(s);
+            System.out.println(s);
         }
 
         btnRecherche.setOnClickListener(new View.OnClickListener() {
@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             progressDialog.setMessage("Téléchargement des fichiers");
-            FirebaseHelper.uploadFile(uriString,fileName);
+            //FirebaseHelper.uploadFile(uriString,fileName);
             progressDialog.dismiss();
 
             return  null;
