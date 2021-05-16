@@ -23,12 +23,14 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     BitmapHelper bitmapHelper;
     DatabaseHelper databaseHelper;
     GrapheParListe grapheParListe;
+    String nomDataBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +104,12 @@ public class MainActivity extends AppCompatActivity {
         bitmapHelper = new BitmapHelper(getResources());
 
         //initialisation de l'instance de la classe DatabaseHelper
-        databaseHelper = new DatabaseHelper(MainActivity.this, "ENSEMMapDataBase.db",1);
+        if(swtcMobiliteReduite.isChecked()){
+            nomDataBase = "ENSEMMapDataBasePMR.db";
+        }else{
+            nomDataBase = "ENSEMMapDataBase.db";
+        }
+        databaseHelper = new DatabaseHelper(MainActivity.this, nomDataBase,1);
         databaseHelper.initDatabase();
 
         //on place l'adapteur sur l'autoCompletTextView
@@ -115,9 +123,9 @@ public class MainActivity extends AppCompatActivity {
         grapheParListe = new GrapheParListe(points);
         Route.S = grapheParListe.plusCourtChemin(0,points);
         Route.chemins = GrapheParListe.chemin(0,Route.S,points);
-        for(String s:Route.chemins){
+        /*for(String s:Route.chemins){
             System.out.println(s);
-        }
+        }*/
 
         btnRecherche.setOnClickListener(new View.OnClickListener() {
 
@@ -149,6 +157,29 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... arg) {
 
             progressDialog.setMessage("Recherche de l'itinéraire");
+            if(swtcMobiliteReduite.isChecked() && nomDataBase == "ENSEMMapDataBase.db"){
+                nomDataBase = "ENSEMMapDataBasePMR.db";
+                databaseHelper = new DatabaseHelper(MainActivity.this, nomDataBase,1);
+                databaseHelper.initDatabase();
+
+                //on cree le graphparliste et on lance la recherche de chemin depuis le point 0 vers tous les autres points
+                Vector<Point> points = databaseHelper.lecturePoint();
+                grapheParListe = new GrapheParListe(points);
+                Route.S = grapheParListe.plusCourtChemin(0,points);
+                Route.chemins = GrapheParListe.chemin(0,Route.S,points);
+            }else if(!swtcMobiliteReduite.isChecked() && nomDataBase == "ENSEMMapDataBasePMR.db"){
+                nomDataBase = "ENSEMMapDataBase.db";
+
+                databaseHelper = new DatabaseHelper(MainActivity.this, nomDataBase,1);
+                databaseHelper.initDatabase();
+
+                //on cree le graphparliste et on lance la recherche de chemin depuis le point 0 vers tous les autres points
+                Vector<Point> points = databaseHelper.lecturePoint();
+                grapheParListe = new GrapheParListe(points);
+                Route.S = grapheParListe.plusCourtChemin(0,points);
+                Route.chemins = GrapheParListe.chemin(0,Route.S,points);
+            }
+
             int idDestination = Integer.parseInt(databaseHelper.getIdDestination(etRecherche.getText().toString().split(" ")));
             System.out.println(idDestination);
             String[] cheminId = Route.chemins[GrapheParListe.indicesommetDansS(Route.S,GrapheParListe.idHahMap.get(idDestination))].split("-");
